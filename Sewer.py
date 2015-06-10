@@ -52,15 +52,15 @@ class SewerDesign:
         v0min = 1.11
         yd_law = 0.5
         if d >= 0.4:
-            print '[1.] diameter ok', d
+            print '[1.] diameter ok {} [m]'.format(d)
         else:
             print '[1.] diameter not ok: ', d
         if y_d <= yd_law:
             print '[2.] y/D ok: ',y_d
         else:
-            print('[2.] y/D ratio not ok {}'.format(y_d))
+            print('[2.] y/D ratio not OK {}'.format(y_d))
         if v < vmax:
-            print '[3.] below max velocity: {}'.format(v)
+            print '[3.] below max velocity OK: {}'.format(v)
         else:
             print('[3.] velocity above max:  {}'.format(v))
         if v > vmin:
@@ -68,18 +68,25 @@ class SewerDesign:
         else:
             print('[4.] velocity below min!!!:  {}'.format(v))
         if v0 > v0min:
-            print '[5.] elaxistes kliseis ok: {}'.format(v0)
+            print '[5.] elaxistes kliseis OK: {}'.format(v0)
 
-    def type_one(self, Q, S, y_d):
+    def type_one(self, q, s, y_d):
+        """
+        :param q: flow rate [m^3/s]
+        :param s: slope [m/km]
+        :param y_d: fullness ratio
+        :return:
+        """
         #step 1 full pipe flow
-        Q0 = Q/self.q_qf_y_d(y_d)
-        print Q0
-        D = self.pipe_diameter(self.n0, Q0*10**-3, S)
+        Q0 = q/self.q_qf_y_d(y_d)
+        print 'Q0 is: {}'.format(Q0)
+        D = self.pipe_diameter(self.n0, Q0, s)
         if D < 0.4:
             print 'needs larger diameter', D
-            self.type_two(Q, S, 0.4)
+            self.type_two(q, s, 0.4)
         else:
-            return D
+            print 'diameter is ok: ', D
+            self.type_three()
 
     def type_two(self, q, s, d):
         #step 1
@@ -98,7 +105,22 @@ class SewerDesign:
         self.law_checks_pantoroika(d, y_d, v, v0)
         return None
 
+    def type_three(self, q, s, d):
+        """
+        :param q: flow rate [m^3/s]
+        :param s: slope [m/km]
+        :param d: pipe diameter [m]
+        :return:
+        """
+        q0 = self.Q_pipe_circular(self.n0, d, s)
+        v0 = self.V_pipe_circular(q0, d)
+        q_q0 = q/q0
+        y_d = input('for Q/Q0 = {} what is the ratio y/d: '.format(q_q0))
+        v_v0 = self.v_vf_h_d(y_d)
+        v = v_v0*v0
+        self.law_checks_pantoroika(d, y_d, v, v0)
 
 if __name__ == '__main__':
     sd = SewerDesign()
-    print sd.type_one(37.6, 0.041, 0.7)
+    #print sd.type_one(0.718, 0.004, 0.7)
+    print sd.type_three(0.718, 0.004, 1)
