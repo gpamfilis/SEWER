@@ -3,8 +3,9 @@ __author__ = 'George Pamfilis'
 __version__ = '1.0'
 __contact__ = 'gpamfilis@gmail.com'
 
-import numpy as np
+import pandas as pd
 from sewer_calculations import *
+data = pd.read_excel('sewer_data.xlsx',sheetname='data-sewer')
 
 class SewerDesign:
     """
@@ -46,13 +47,16 @@ class SewerDesign:
         #step 1 full pipe flow
         Q0 = q/self.q_qf_y_d(y_d)
         print 'Q0 is: {} [m^3/s]'.format(Q0)
-        D = pipe_diameter(self.n0, Q0, s)
+        D = diameter_from_available(pipe_diameter(self.n0, Q0, s))
         if D < 0.4:
             print 'needs larger diameter', D
-            self.type_two(q, s, 0.4)
+            dia = input('new diameter [m]: ')
+            self.type_two(q, s, dia)
         else:
             print 'diameter is ok: ', D
-            self.type_three()
+            dia = input('new diameter [m]: ')
+
+            self.type_three(q, s, dia)
 
     def type_two(self, q, s, d):
         #step 1
@@ -112,9 +116,29 @@ def law_checks_pantoroika(d, y_d, v, v0):
         print '[5.] elaxistes kliseis OK: {} [m/s]'.format(v0)
 
 
+def diameter_from_available(theoretical_diameter):
+    available_diameters = [0.35, 0.40, 0.45, 0.50, 0.60, 0.70, 0.80, 0.90, 1.0, 1.1,
+                           1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
+    for i, D in enumerate(available_diameters):
+        if D < theoretical_diameter:
+            pass
+        else:
+            theoretical_diameter = D
+            break
+    return theoretical_diameter
+
 if __name__ == '__main__':
     sd = SewerDesign()
-    q = input('enter flow rate [m^3/s]: ')
-    s = input('enter slope [-]: ')
-    y_d = input('enter fullness ratio y/D [-]: ')
-    print sd.type_one(q, s, y_d)
+    x = raw_input('from file [y] or one by one [n]: ')
+    if x == 'y':
+        for i, d in enumerate(data['Q']):
+            print 'SECTION: ', data['Section'][i]
+            print ''
+            sd.type_one(d/1000., data['S'][i], 0.5)
+            print ''
+    else:
+
+        q = input('enter flow rate [m^3/s]: ')
+        s = input('enter slope [-]: ')
+        y_d = input('enter fullness ratio y/D [-]: ')
+        sd.type_one(q/1000., s, y_d)
