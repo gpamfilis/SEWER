@@ -17,3 +17,9 @@ def flow_in_circular_pipe(n, d, s):
 
 def velocity_in_circular_pipe(q, d):
     return (4*q)/(np.pi*d**2)
+
+
+def theta(y_d):
+    theta = 2*np.arccos((1-(2*y_d)))
+    return theta
+

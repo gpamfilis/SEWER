@@ -18,20 +18,15 @@ class SewerDesign:
         self.n0 = 0.015
         pass
 
-    @staticmethod
-    def theta(y_d):
-        theta = 2*np.arccos((1-(2*y_d)))
-        return theta
-
     def q_qf_y_d(self, h_d):
-        theta = self.theta(h_d)
+        theta = theta(h_d)
         numerator = (theta-np.sin(theta))**1.62
         denominator = (theta+np.sin(theta/2))**0.62
         q_qf = (1./2*np.pi)*(numerator/denominator)
         return q_qf/10.
 
     def v_vf_h_d(self, h_d):
-        theta = self.theta(h_d)
+        theta = theta(h_d)
         numerator = (theta-np.sin(theta))
         denomenator = (theta+np.sin(theta/2.))
         V_Vf = (numerator/denomenator)**0.62
@@ -89,6 +84,8 @@ class SewerDesign:
         v_v0 = self.v_vf_h_d(y_d)
         v = v_v0*v0
         law_checks_pantoroika(d, y_d, v, v0)
+
+
 
 
 def law_checks_pantoroika(d, y_d, v, v0):
