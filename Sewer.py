@@ -5,7 +5,7 @@ __contact__ = 'gpamfilis@gmail.com'
 
 import pandas as pd
 from sewer_calculations import *
-data = pd.read_excel('sewer_data.xlsx',sheetname='data-sewer')
+data = pd.read_excel('sewer_data.xlsx', sheetname='data-sewer')
 
 class SewerDesign:
     """
