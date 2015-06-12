@@ -18,17 +18,19 @@ class SewerDesign:
         self.n0 = 0.015
         pass
 
-    def q_qf_y_d(self, h_d):
-        angle_theta_pipe_interior = theta(h_d)
-        numerator = (angle_theta_pipe_interior-np.sin(angle_theta_pipe_interior))**1.62
-        denominator = (angle_theta_pipe_interior+np.sin(angle_theta_pipe_interior/2))**0.62
+    @staticmethod
+    def flow_ratio(h_d):
+        angle_theta = theta(h_d)
+        numerator = (angle_theta-np.sin(angle_theta))**1.62
+        denominator = (angle_theta+np.sin(angle_theta/2))**0.62
         q_qf = (1./2*np.pi)*(numerator/denominator)
         return q_qf/10.
 
-    def v_vf_h_d(self, h_d):
-        angle_theta_pipe_interior = theta(h_d)
-        numerator = (angle_theta_pipe_interior-np.sin(angle_theta_pipe_interior))
-        denominator = (angle_theta_pipe_interior+np.sin(angle_theta_pipe_interior/2.))
+    @staticmethod
+    def velocity_ratio(h_d):
+        angle_theta = theta(h_d)
+        numerator = (angle_theta-np.sin(angle_theta))
+        denominator = (angle_theta+np.sin(angle_theta/2.))
         V_Vf = (numerator/denominator)**0.62
         return V_Vf
 
@@ -40,7 +42,7 @@ class SewerDesign:
         :return:
         """
         #step 1 full pipe flow
-        flow_full_pipe = flow_rate/self.q_qf_y_d(fullness_ratio)
+        flow_full_pipe = flow_rate/self.flow_ratio(fullness_ratio)
         print 'Q0 is: {} [m^3/sec]'.format(flow_full_pipe)
         D = diameter_from_available(pipe_diameter_calculation(self.n0, flow_full_pipe, slope))
         if D < 0.4:
@@ -62,7 +64,7 @@ class SewerDesign:
         print 'the q/Q0 ratio is: {}'.format(q_q0)
         # step 3
         y_d = input('for q/q0 what is the ratio y/d: ')
-        v_v0 = self.v_vf_h_d(y_d)
+        v_v0 = self.velocity_ratio(y_d)
         # step 4
         h = d*y_d
         # step 5
@@ -81,7 +83,7 @@ class SewerDesign:
         v0 = velocity_in_circular_pipe(q0, pipe_diameter)
         q_q0 = flow_rate/q0
         y_d = input('for Q/Q0 = {} what is the ratio y/pipe_diameter_calculation: '.format(q_q0))
-        v_v0 = self.v_vf_h_d(y_d)
+        v_v0 = self.velocity_ratio(y_d)
         v = v_v0*v0
         law_checks_pantoroika(pipe_diameter, y_d, v, v0)
 
