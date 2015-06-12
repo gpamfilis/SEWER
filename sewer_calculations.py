@@ -5,10 +5,10 @@ __contact__ = 'gpamfilis@gmail.com'
 import numpy as np
 
 
-def pipe_diameter(n0, q0, s):
+def pipe_diameter_calculation(n0, q0, s):
     numerator = (4**(5./3)*n0*q0)
-    denomenator = np.pi*s**(1/2.)
-    return (numerator/denomenator)**(3./8)
+    denominator = np.pi*s**(1/2.)
+    return (numerator/denominator)**(3./8)
 
 
 def flow_in_circular_pipe(n, d, s):

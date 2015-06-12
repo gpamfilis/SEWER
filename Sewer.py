@@ -19,39 +19,39 @@ class SewerDesign:
         pass
 
     def q_qf_y_d(self, h_d):
-        theta = theta(h_d)
-        numerator = (theta-np.sin(theta))**1.62
-        denominator = (theta+np.sin(theta/2))**0.62
+        angle_theta_pipe_interior = theta(h_d)
+        numerator = (angle_theta_pipe_interior-np.sin(angle_theta_pipe_interior))**1.62
+        denominator = (angle_theta_pipe_interior+np.sin(angle_theta_pipe_interior/2))**0.62
         q_qf = (1./2*np.pi)*(numerator/denominator)
         return q_qf/10.
 
     def v_vf_h_d(self, h_d):
-        theta = theta(h_d)
-        numerator = (theta-np.sin(theta))
-        denomenator = (theta+np.sin(theta/2.))
-        V_Vf = (numerator/denomenator)**0.62
+        angle_theta_pipe_interior = theta(h_d)
+        numerator = (angle_theta_pipe_interior-np.sin(angle_theta_pipe_interior))
+        denominator = (angle_theta_pipe_interior+np.sin(angle_theta_pipe_interior/2.))
+        V_Vf = (numerator/denominator)**0.62
         return V_Vf
 
-    def type_one(self, q, s, y_d):
+    def type_one(self, flow_rate, slope, fullness_ratio):
         """
-        :param q: flow rate [m^3/s]
-        :param s: slope [m/km]
-        :param y_d: fullness ratio
+        :param flow_rate: flow rate [m^3/sec]
+        :param slope: slope [m/km]
+        :param fullness_ratio: fullness ratio
         :return:
         """
         #step 1 full pipe flow
-        Q0 = q/self.q_qf_y_d(y_d)
-        print 'Q0 is: {} [m^3/s]'.format(Q0)
-        D = diameter_from_available(pipe_diameter(self.n0, Q0, s))
+        flow_full_pipe = flow_rate/self.q_qf_y_d(fullness_ratio)
+        print 'Q0 is: {} [m^3/sec]'.format(flow_full_pipe)
+        D = diameter_from_available(pipe_diameter_calculation(self.n0, flow_full_pipe, slope))
         if D < 0.4:
             print 'needs larger diameter', D
             dia = input('new diameter [m]: ')
-            self.type_two(q, s, dia)
+            self.type_two(flow_rate, slope, dia)
         else:
             print 'diameter is ok: ', D
             dia = input('new diameter [m]: ')
 
-            self.type_three(q, s, dia)
+            self.type_three(flow_rate, slope, dia)
 
     def type_two(self, q, s, d):
         #step 1
@@ -70,20 +70,20 @@ class SewerDesign:
         law_checks_pantoroika(d, y_d, v, v0)
         return None
 
-    def type_three(self, q, s, d):
+    def type_three(self, flow_rate, slope, pipe_diameter):
         """
-        :param q: flow rate [m^3/s]
-        :param s: slope [m/km]
-        :param d: pipe diameter [m]
+        :param flow_rate: flow rate [m^3/sec]
+        :param slope: slope [m/km]
+        :param pipe_diameter: pipe diameter [m]
         :return:
         """
-        q0 = flow_in_circular_pipe(self.n0, d, s)
-        v0 = velocity_in_circular_pipe(q0, d)
-        q_q0 = q/q0
-        y_d = input('for Q/Q0 = {} what is the ratio y/d: '.format(q_q0))
+        q0 = flow_in_circular_pipe(self.n0, pipe_diameter, slope)
+        v0 = velocity_in_circular_pipe(q0, pipe_diameter)
+        q_q0 = flow_rate/q0
+        y_d = input('for Q/Q0 = {} what is the ratio y/pipe_diameter_calculation: '.format(q_q0))
         v_v0 = self.v_vf_h_d(y_d)
         v = v_v0*v0
-        law_checks_pantoroika(d, y_d, v, v0)
+        law_checks_pantoroika(pipe_diameter, y_d, v, v0)
 
 
 
