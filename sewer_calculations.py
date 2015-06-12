@@ -23,3 +23,18 @@ def theta(y_d):
     theta = 2*np.arccos((1-(2*y_d)))
     return theta
 
+
+def flow_ratio(h_d):
+    angle_theta = theta(h_d)
+    numerator = (angle_theta-np.sin(angle_theta))**1.62
+    denominator = (angle_theta+np.sin(angle_theta/2))**0.62
+    q_qf = (1./2*np.pi)*(numerator/denominator)
+    return q_qf/10.
+
+
+def velocity_ratio(h_d):
+    angle_theta = theta(h_d)
+    numerator = (angle_theta-np.sin(angle_theta))
+    denominator = (angle_theta+np.sin(angle_theta/2.))
+    V_Vf = (numerator/denominator)**0.62
+    return V_Vf
