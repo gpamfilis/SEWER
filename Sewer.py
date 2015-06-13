@@ -28,7 +28,7 @@ class SewerDesign:
         :return:
         """
         flow_rate /= 1000.
-        print '[1.T1] Q is: {} [m^3/sec]'.format(flow_rate)
+        print 'Q is: {} [m^3/sec]'.format(flow_rate)
         diameter_min = 0.4
         # step 1 full pipe flow
         flow_full_pipe = flow_rate / flow_ratio_calculation(fullness_ratio)
@@ -41,20 +41,23 @@ class SewerDesign:
             self.type_two(flow_rate, slope, new_diameter)
         else:
             print 'diameter is ok: ', pipe_diameter
-            #new_diameter = input('new diameter [m]: ')
+            # new_diameter = input('new diameter [m]: ')
             print '[4.T1] Proceeding for TYPE-3 hydraulics problem (check whether the diameter is fit for our case'
             self.type_three(flow_rate, slope, pipe_diameter)
 
     def type_two(self, flow_rate, slope, pipe_diameter):
-        #step 1
+        # step 1
         flow_full_pipe = flow_in_circular_pipe(self.n0, pipe_diameter, slope)
+        print '[1.T2] Q0 is: {} [m^3/sec]'.format(flow_full_pipe)
         velocity_full_pipe = velocity_in_circular_pipe(flow_full_pipe, pipe_diameter)
+        print '[2.T2] V0 is: {} [m^3/sec]'.format(velocity_full_pipe)
         # step 2
         flow_ratio = flow_rate/flow_full_pipe
-        print 'the Q/Q0 ratio is: {}'.format(flow_ratio)
+        print '[3.T2] The flow ratio (Q/Q0) ratio is: {} [-]'.format(flow_ratio)
         # step 3
-        fullness_ratio = input('for flow_rate/q0 what is the ratio y/pipe_diameter: ')
+        fullness_ratio = input('[4.T2] For flow ratio {} what is the ratio y/pipe_diameter: '.format(flow_ratio))
         velocity_ratio = velocity_ratio_calculation(fullness_ratio)
+        print '[5.T2] The velocity ratio (V/V0) is: {} [-]'.format(velocity_ratio)
         # step 4
         h = pipe_diameter*fullness_ratio
         # step 5
@@ -78,8 +81,6 @@ class SewerDesign:
         law_checks_pantoroika(pipe_diameter, fullness_ratio, velocity, velocity_full_pipe)
 
 
-
-
 if __name__ == '__main__':
     sd = SewerDesign()
     x = raw_input('from file [y] or one by one [n]: ')
@@ -87,7 +88,7 @@ if __name__ == '__main__':
         for i, d in enumerate(data['Q']):
             print 'SECTION: ', data['Section'][i]
             print ''
-            sd.type_one(d/1000., data['S'][i], 0.5)  # divide with 1000 to convert to m^3/sec
+            sd.type_one(d, data['S'][i], 0.5)  # divide with 1000 to convert to m^3/sec
             print ''
     else:
 
