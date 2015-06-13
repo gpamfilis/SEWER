@@ -7,6 +7,7 @@ import pandas as pd
 from sewer_calculations import *
 data = pd.read_excel('sewer_data.xlsx', sheetname='data-sewer')
 
+
 class SewerDesign:
     """
     http://www.researchgate.net/publication/245336759_
@@ -48,12 +49,12 @@ class SewerDesign:
         print 'the Q/Q0 ratio is: {}'.format(flow_ratio)
         # step 3
         fullness_ratio = input('for flow_rate/q0 what is the ratio y/pipe_diameter: ')
-        v_v0 = velocity_ratio_calculation(fullness_ratio)
+        velocity_ratio = velocity_ratio_calculation(fullness_ratio)
         # step 4
         h = pipe_diameter*fullness_ratio
         # step 5
-        v = velocity_full_pipe*v_v0
-        law_checks_pantoroika(pipe_diameter, fullness_ratio, v, velocity_full_pipe)
+        velocity = velocity_full_pipe*velocity_ratio
+        law_checks_pantoroika(pipe_diameter, fullness_ratio, velocity, velocity_full_pipe)
         return None
 
     def type_three(self, flow_rate, slope, pipe_diameter):
@@ -63,41 +64,14 @@ class SewerDesign:
         :param pipe_diameter: pipe diameter [m]
         :return:
         """
-        q0 = flow_in_circular_pipe(self.n0, pipe_diameter, slope)
-        v0 = velocity_in_circular_pipe(q0, pipe_diameter)
-        q_q0 = flow_rate/q0
-        y_d = input('for Q/Q0 = {} what is the ratio y/pipe_diameter_calculation: '.format(q_q0))
-        v_v0 = velocity_ratio_calculation(y_d)
-        v = v_v0*v0
-        law_checks_pantoroika(pipe_diameter, y_d, v, v0)
+        flow_full_pipe = flow_in_circular_pipe(self.n0, pipe_diameter, slope)
+        velocity_full_pipe = velocity_in_circular_pipe(flow_full_pipe, pipe_diameter)
+        flow_ratio = flow_rate/flow_full_pipe
+        fullness_ratio = input('for Q/Q0 = {} what is the ratio y/pipe_diameter_calculation: '.format(flow_ratio))
+        velocity_ratio = velocity_ratio_calculation(fullness_ratio)
+        velocity = velocity_ratio*velocity_full_pipe
+        law_checks_pantoroika(pipe_diameter, fullness_ratio, velocity, velocity_full_pipe)
 
-
-
-
-
-def law_checks_pantoroika(d, y_d, v, v0):
-    vmax = 3.
-    vmin = 0.6
-    v0min = 1.11
-    yd_law = 0.5
-    if d >= 0.4:
-        print '[1.] diameter ok {} [m]'.format(d)
-    else:
-        print '[1.] diameter not ok: ', d
-    if y_d <= yd_law:
-        print '[2.] y/D ok: {} [-] '.format(y_d)
-    else:
-        print('[2.] y/D ratio not OK {} [-]'.format(y_d))
-    if v < vmax:
-        print '[3.] below max velocity OK: {} [m/s]'.format(v)
-    else:
-        print('[3.] velocity above max: {} [m/s]'.format(v))
-    if v > vmin:
-        print '[4.] above min velocity OK!: {} [m/s]'.format(v)
-    else:
-        print('[4.] velocity below min!!!: {} [m/s]'.format(v))
-    if v0 > v0min:
-        print '[5.] elaxistes kliseis OK: {} [m/s]'.format(v0)
 
 
 
