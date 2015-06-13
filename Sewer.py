@@ -85,10 +85,10 @@ if __name__ == '__main__':
     sd = SewerDesign()
     x = raw_input('from file [y] or one by one [n]: ')
     if x == 'y':
-        for i, d in enumerate(data['Q']):
+        for i, flow_rate in enumerate(data['Q']):
             print 'SECTION: ', data['Section'][i]
             print ''
-            sd.type_one(d, data['S'][i], 0.5)  # divide with 1000 to convert to m^3/sec
+            sd.type_one(flow_rate, data['S'][i], 0.5)
             print ''
     else:
 
