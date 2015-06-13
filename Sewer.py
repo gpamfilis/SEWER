@@ -25,35 +25,35 @@ class SewerDesign:
         :param fullness_ratio: fullness ratio
         :return:
         """
-        #step 1 full pipe flow
-        flow_full_pipe = flow_rate/ flow_ratio(fullness_ratio)
+        # step 1 full pipe flow
+        flow_full_pipe = flow_rate / flow_ratio_calculation(fullness_ratio)
         print 'Q0 is: {} [m^3/sec]'.format(flow_full_pipe)
-        D = diameter_from_available(pipe_diameter_calculation(self.n0, flow_full_pipe, slope))
-        if D < 0.4:
-            print 'needs larger diameter', D
+        pipe_diameter = diameter_from_available(pipe_diameter_calculation(self.n0, flow_full_pipe, slope))
+        if pipe_diameter < 0.4:
+            print 'needs larger diameter', pipe_diameter
             dia = input('new diameter [m]: ')
             self.type_two(flow_rate, slope, dia)
         else:
-            print 'diameter is ok: ', D
+            print 'diameter is ok: ', pipe_diameter
             dia = input('new diameter [m]: ')
 
             self.type_three(flow_rate, slope, dia)
 
-    def type_two(self, q, s, d):
+    def type_two(self, flow_rate, slope, pipe_diameter):
         #step 1
-        q0 = flow_in_circular_pipe(self.n0, d, s)
-        v0 = velocity_in_circular_pipe(q0, d)
+        flow_full_pipe = flow_in_circular_pipe(self.n0, pipe_diameter, slope)
+        velocity_full_pipe = velocity_in_circular_pipe(flow_full_pipe, pipe_diameter)
         # step 2
-        q_q0 = q/q0
-        print 'the q/Q0 ratio is: {}'.format(q_q0)
+        flow_ratio = flow_rate/flow_full_pipe
+        print 'the Q/Q0 ratio is: {}'.format(flow_ratio)
         # step 3
-        y_d = input('for q/q0 what is the ratio y/d: ')
-        v_v0 = velocity_ratio(y_d)
+        fullness_ratio = input('for flow_rate/q0 what is the ratio y/pipe_diameter: ')
+        v_v0 = velocity_ratio_calculation(fullness_ratio)
         # step 4
-        h = d*y_d
+        h = pipe_diameter*fullness_ratio
         # step 5
-        v = v0*v_v0
-        law_checks_pantoroika(d, y_d, v, v0)
+        v = velocity_full_pipe*v_v0
+        law_checks_pantoroika(pipe_diameter, fullness_ratio, v, velocity_full_pipe)
         return None
 
     def type_three(self, flow_rate, slope, pipe_diameter):
@@ -67,7 +67,7 @@ class SewerDesign:
         v0 = velocity_in_circular_pipe(q0, pipe_diameter)
         q_q0 = flow_rate/q0
         y_d = input('for Q/Q0 = {} what is the ratio y/pipe_diameter_calculation: '.format(q_q0))
-        v_v0 = velocity_ratio(y_d)
+        v_v0 = velocity_ratio_calculation(y_d)
         v = v_v0*v0
         law_checks_pantoroika(pipe_diameter, y_d, v, v0)
 
@@ -100,16 +100,6 @@ def law_checks_pantoroika(d, y_d, v, v0):
         print '[5.] elaxistes kliseis OK: {} [m/s]'.format(v0)
 
 
-def diameter_from_available(theoretical_diameter):
-    available_diameters = [0.35, 0.40, 0.45, 0.50, 0.60, 0.70, 0.80, 0.90, 1.0, 1.1,
-                           1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
-    for i, D in enumerate(available_diameters):
-        if D < theoretical_diameter:
-            pass
-        else:
-            theoretical_diameter = D
-            break
-    return theoretical_diameter
 
 if __name__ == '__main__':
     sd = SewerDesign()
