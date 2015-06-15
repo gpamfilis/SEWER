@@ -62,7 +62,7 @@ class SewerDesign:
         h = pipe_diameter*fullness_ratio
         # step 5
         velocity = velocity_full_pipe*velocity_ratio
-        law_checks_pantoroika(pipe_diameter, fullness_ratio, velocity, velocity_full_pipe)
+        law_checks_mixed_flow(pipe_diameter, fullness_ratio, velocity, velocity_full_pipe)
         return None
 
     def type_three(self, flow_rate, slope, pipe_diameter):
@@ -78,7 +78,7 @@ class SewerDesign:
         fullness_ratio = input('for Q/Q0 = {} what is the ratio y/pipe_diameter_calculation: '.format(flow_ratio))
         velocity_ratio = velocity_ratio_calculation(fullness_ratio)
         velocity = velocity_ratio*velocity_full_pipe
-        law_checks_pantoroika(pipe_diameter, fullness_ratio, velocity, velocity_full_pipe)
+        law_checks_mixed_flow(pipe_diameter, fullness_ratio, velocity, velocity_full_pipe)
 
 
 if __name__ == '__main__':
