@@ -40,6 +40,12 @@ def velocity_ratio_calculation(fullness_ratio):
     return velocity_ratio
 
 
+def manning_coefficient_ratio_calculation(fullness_ratio):
+    theta_angle = theta_angle_in_pipe(fullness_ratio)
+    n_n0 = 1+2.31*(theta_angle/(2*np.pi))**1.2*(1-(theta_angle/(2*np.pi)))**2
+    return n_n0
+
+
 def diameter_from_available(computed_diameter):
     available_diameters = [0.35, 0.40, 0.45, 0.50, 0.60, 0.70, 0.80, 0.90, 1.0, 1.1,
                            1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
@@ -50,3 +56,7 @@ def diameter_from_available(computed_diameter):
             computed_diameter = pipe_diameter
             break
     return computed_diameter
+
+
+if __name__ == '__main__':
+    print flow_ratio_calculation(0.5)
